@@ -7,6 +7,7 @@ const errorHandler = (err, req, res, next) => {
 	case 'jwt must be provided':
 	case 'jwt signature is required':
 	case 'invalid signature':
+	case 'UnAuthorized':
 		responseMsg.error = 'UnAuthorized';
 		responseMsg.status = 401;
 		break;

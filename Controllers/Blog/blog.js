@@ -29,16 +29,35 @@ const getOwn = (id, page, count) => {
 	return blogs;
 };
 
-const deleteOne = (id) => {
+const deleteOne = async (id, userId) => {
+	const blogAuthor = await Blog.findById(id, {author: 1}).exec();
+	
+	if (blogAuthor && blogAuthor.author != userId)
+		throw new Error('UnAuthorized');
+	
 	const result = Blog.findByIdAndDelete(id).exec();
 	return result;
 };
 
-const edit = (id, blogData) => {
+const edit = async (id, blogData, userId) => {
+	const blogAuthor = await Blog.findById(id, {author: 1}).exec();
+	
+	if (blogAuthor && blogAuthor.author != userId)
+		throw new Error('UnAuthorized');
+
 	const blog = Blog.findByIdAndUpdate(id, blogData).exec();
 	return blog;
 };
 
+const like = (id, userId) => {
+	const blog = Blog.findByIdAndUpdate(id, {$addToSet: {likers: userId}}).exec();
+	return blog;
+};
+
+const unlike = (id, userId) => {
+	const blog = Blog.findByIdAndUpdate(id, {$pull: {likers: userId}}).exec();
+	return blog;
+};
 
 module.exports = {
 	add,
@@ -47,4 +66,6 @@ module.exports = {
 	deleteOne,
 	edit,
 	getOwn,
+	like,
+	unlike,
 };

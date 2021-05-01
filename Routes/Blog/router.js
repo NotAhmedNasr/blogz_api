@@ -52,10 +52,10 @@ router.get('/:id', async (req, res, next) => {
 });
 
 router.patch('/:id', async (req, res, next) => {
-	const { params, body } = req;
+	const { params, body, userId } = req;
 
 	try {
-		const blog = await blogActions.edit(params.id, body);
+		const blog = await blogActions.edit(params.id, body, userId);
 		res.status(200).json(blog);
 	} catch (error) {
 		next(error);
@@ -63,11 +63,33 @@ router.patch('/:id', async (req, res, next) => {
 });
 
 router.delete('/:id', async (req, res, next) => {
-	const { params } = req;
+	const { params, userId } = req;
 
 	try {
-		const result = await blogActions.deleteOne(params.id);
+		const result = await blogActions.deleteOne(params.id, userId);
 		res.status(200).json(result);
+	} catch (error) {
+		next(error);
+	}
+});
+
+router.patch('/like/:id', async (req, res, next) => {
+	const { params, userId } = req;
+	
+	try {
+		const result = await blogActions.like(params.id, userId);
+		res.json(result);
+	} catch (error) {
+		next(error);
+	}
+});
+
+router.patch('/unlike/:id', async (req, res, next) => {
+	const { params, userId } = req;
+	
+	try {
+		const result = await blogActions.unlike(params.id, userId);
+		res.json(result);
 	} catch (error) {
 		next(error);
 	}
