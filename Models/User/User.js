@@ -1,5 +1,9 @@
 /* eslint-disable no-useless-escape */
 const { Schema, model } = require('mongoose');
+const { promisify } = require('util');
+const bcrypt = require('bcryptjs');
+
+const promisedHash = promisify(bcrypt.hash);
 
 const userSchema = new Schema({
 	firstname: {
@@ -56,6 +60,36 @@ userSchema.index({ firstname: 'text', lastname: 'text', username: 'text' },
 	{ name: 'user text index', weights: { firstname: 10, lastname: 10, username: 5 } });
 userSchema.index({ 'createdAt': 1 });
 userSchema.index({ 'updatedAt': 1 });
+
+userSchema.pre('save', function (next) {
+	promisedHash(this.password, 10)
+		.then(res => {
+			this.password = res;
+			next();
+		})
+		.catch(err => {
+			console.log(err);
+			next();
+		});
+});
+
+userSchema.pre('findOneAndUpdate', function (next) {
+	if (this._update.password) {
+		promisedHash(this._update.password, 10)
+			.then(res => {
+				this._update.password = res;
+				next();
+			})
+			.catch(err => {
+				console.log(err);
+				next();
+			});
+	}
+});
+
+userSchema.methods.validatePassword = async function(password) {
+	return await bcrypt.compare(password, this.password);
+};
 
 const User = model('User', userSchema);
 

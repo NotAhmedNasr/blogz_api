@@ -1,5 +1,6 @@
 const User = require('../../Models/User/User');
 
+
 const add = (userData) => {
 	const user = User.create(userData);
 	return user;
