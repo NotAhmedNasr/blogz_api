@@ -30,10 +30,38 @@ const edit = (id, userData) => {
 	return user;
 };
 
+const login = async ({username, password}) => {
+	const user = await User.findOne({username}).exec();
+	if (user)
+		if(await user.validatePassword(password))
+			return user;
+		else
+			throw new Error('password');
+	else
+		throw new Error('username');
+};
+
+const follow = async (followedId, followerId) => {
+	const follower = await User.findByIdAndUpdate(followerId, {$addToSet: {following: followedId}}).exec();
+	const followed = await User.findByIdAndUpdate(followedId, {$addToSet: {followers: followerId}}).exec();
+
+	return { follower, followed };
+};
+
+const unfollow = async (followedId, followerId) => {
+	const follower = await User.findByIdAndUpdate(followerId, {$pull: {following: followedId}}).exec();
+	const followed = await User.findByIdAndUpdate(followedId, {$pull: {followers: followerId}}).exec();
+
+	return { follower, followed };
+};
+
 module.exports = {
 	add,
 	getAll,
 	getOne,
 	deleteOne,
 	edit,
+	login,
+	follow,
+	unfollow,
 };

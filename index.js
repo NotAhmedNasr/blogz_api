@@ -3,6 +3,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 
 const appRouter = require('./Routes');
+const { errorHandler } = require('./Middlewares/Error');
 
 const app = express();
 
@@ -14,6 +15,7 @@ const { MONGO_URI, PORT } = process.env;
 
 app.use('/api', appRouter);
 
+app.use(errorHandler);
 
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true , useFindAndModify: false})
 	.then(() => {

@@ -81,14 +81,15 @@ userSchema.pre('findOneAndUpdate', function (next) {
 				next();
 			})
 			.catch(err => {
-				console.log(err);
-				next();
+				next(err);
 			});
+	} else {
+		next();
 	}
 });
 
-userSchema.methods.validatePassword = async function(password) {
-	return await bcrypt.compare(password, this.password);
+userSchema.methods.validatePassword = function(password) {
+	return bcrypt.compare(password, this.password);
 };
 
 const User = model('User', userSchema);
