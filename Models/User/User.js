@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-mixed-spaces-and-tabs */
 /* eslint-disable no-useless-escape */
 const { Schema, model } = require('mongoose');
 const { promisify } = require('util');
@@ -54,10 +56,21 @@ const userSchema = new Schema({
 		type: String,
 		ref: 'User'
 	}],
-}, { timestamps: true });
+}, 
+{ 
+	timestamps: true,
+	toJSON: {
+		transform: function(doc, ret, options) {
+		    delete ret.password;
+		    return ret;
+		},
+	},
+});
 
-userSchema.index({ firstname: 'text', lastname: 'text', username: 'text' },
-	{ name: 'user text index', weights: { firstname: 10, lastname: 10, username: 5 } });
+userSchema.index(
+	{ firstname: 'text', lastname: 'text', username: 'text' },
+	{ name: 'user text index', weights: { firstname: 10, lastname: 10, username: 5 } }
+);
 userSchema.index({ 'createdAt': 1 });
 userSchema.index({ 'updatedAt': 1 });
 

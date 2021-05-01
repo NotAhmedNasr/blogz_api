@@ -4,6 +4,7 @@ const errorHandler = (err, req, res, next) => {
 	
 	switch (err.message) {
 	case 'jwt malformed':
+	case 'jwt must be provided':
 	case 'jwt signature is required':
 	case 'invalid signature':
 		responseMsg.error = 'UnAuthorized';

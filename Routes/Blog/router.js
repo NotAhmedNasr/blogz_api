@@ -1,21 +1,76 @@
 const express = require('express');
+const { authorize } = require('../../Middlewares/Authorization');
+
+const blogActions = require('../../Controllers/Blog/blog');
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-	res.end('blog get all');
+router.get('/', async (req, res, next) => {
+	const { query } = req;
+
+	try {
+		const blogs = await blogActions.getAll(query.page, query.count);
+		res.status(200).json(blogs);
+	} catch (error) {
+		next(error);
+	}
 });
-router.get('/:id', (req, res) => {
-	res.end('blog get id');
+
+router.use(authorize);
+
+router.post('/', async (req, res, next) => {
+	const { body, userId } = req;
+
+	try {
+		const blog = await blogActions.add({...body, author: userId});
+		res.status(201).json(blog);
+	} catch (error) {
+		next(error);
+	}
 });
-router.post('/', (req, res) => {
-	res.end('blog post');
+
+router.get('/own', async (req, res, next) => {
+	const { query, userId } = req;
+
+	try {
+		const blogs = await blogActions.getOwn(userId, query.page, query.count);
+		res.status(200).json(blogs);
+	} catch (error) {
+		next(error);
+	}
 });
-router.patch('/:id', (req, res) => {
-	res.end('blog patch');
+
+router.get('/:id', async (req, res, next) => {
+	const { params } = req;
+
+	try {
+		const blog = await blogActions.getOne(params.id);
+		res.status(200).json(blog);
+	} catch (error) {
+		next(error);
+	}
 });
-router.delete('/:id', (req, res) => {
-	res.end('blog delete');
+
+router.patch('/:id', async (req, res, next) => {
+	const { params, body } = req;
+
+	try {
+		const blog = await blogActions.edit(params.id, body);
+		res.status(200).json(blog);
+	} catch (error) {
+		next(error);
+	}
+});
+
+router.delete('/:id', async (req, res, next) => {
+	const { params } = req;
+
+	try {
+		const result = await blogActions.deleteOne(params.id);
+		res.status(200).json(result);
+	} catch (error) {
+		next(error);
+	}
 });
 
 module.exports = router;
