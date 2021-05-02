@@ -10,6 +10,10 @@ const commentSchema = new Schema({
 		type: String,
 		ref: 'User',
 	},
+	blog: {
+		type: String,
+		ref: 'Blog',
+	},
 	imageUrl: String,
 },{ timestamps: true });
 

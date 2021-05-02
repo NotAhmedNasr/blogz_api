@@ -33,7 +33,7 @@ const errorHandler = (err, req, res, next) => {
 		}
 	}
 
-	res.json(responseMsg);
+	res.status(responseMsg.status).json(responseMsg.error);
 };
 
 module.exports = {

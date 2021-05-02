@@ -59,6 +59,14 @@ const unlike = (id, userId) => {
 	return blog;
 };
 
+const comment = (id, commId) => {
+	return Blog.findByIdAndUpdate(id, {$addToSet: {comments: commId}}).exec();
+};
+
+const uncomment = (id, commId) => {
+	return Blog.findByIdAndUpdate(id, {$pull: {comments: commId}}).exec();
+};
+
 module.exports = {
 	add,
 	getAll,
@@ -68,4 +76,6 @@ module.exports = {
 	getOwn,
 	like,
 	unlike,
+	comment,
+	uncomment,
 };

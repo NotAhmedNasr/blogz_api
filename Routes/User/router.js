@@ -5,16 +5,7 @@ const userActions = require('../../Controllers/User/user');
 
 const router = express.Router();
 
-router.get('/', async (req, res, next) => {
-	const { query } = req;
 
-	try {
-		const users = await userActions.getAll(query.page, query.count);
-		res.status(200).json(users);
-	} catch (error) {
-		next(error);
-	}
-});
 
 router.post('/login', async (req, res, next) => {
 	const { body } = req;
@@ -38,6 +29,17 @@ router.post('/', async (req, res, next) => {
 });
 
 router.use(authorize);
+
+router.get('/', async (req, res, next) => {
+	const { query } = req;
+
+	try {
+		const users = await userActions.getAll(query.page, query.count);
+		res.status(200).json(users);
+	} catch (error) {
+		next(error);
+	}
+});
 
 router.get('/:id', async (req, res, next) => {
 	const { params } = req;
