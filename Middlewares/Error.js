@@ -1,12 +1,13 @@
 /* eslint-disable no-unused-vars */
 const errorHandler = (err, req, res, next) => {
 	const responseMsg = { error: 'ServerError', status: 500 };
-	
+
 	switch (err.message) {
 	case 'jwt malformed':
 	case 'jwt must be provided':
 	case 'jwt signature is required':
 	case 'invalid signature':
+	case 'password':
 	case 'UnAuthorized':
 		responseMsg.error = 'UnAuthorized';
 		responseMsg.status = 401;
@@ -32,6 +33,8 @@ const errorHandler = (err, req, res, next) => {
 			responseMsg.status = 409;
 		}
 	}
+
+	console.log(err);
 
 	res.status(responseMsg.status).json(responseMsg.error);
 };

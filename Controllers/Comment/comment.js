@@ -8,7 +8,7 @@ const get = (blogId, page, count) => {
 	const comments = Comment.find({blog: blogId}, {}, {
 		skip: +page * +count,
 		limit: +count,
-	}).populate({ path: 'author', select: '_id firstname lastname profilePic' }).exec();
+	}).populate({ path: 'author', select: '_id firstname lastname profilePic username' }).exec();
 
 	return comments;
 };

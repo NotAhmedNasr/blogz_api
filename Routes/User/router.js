@@ -21,7 +21,8 @@ router.post('/login', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
 	const { body } = req;
 	try {
-		const user = await userActions.add(body);
+		let user = await userActions.add(body);
+		user = await generateToken(user.toJSON());
 		res.status(201).json(user);
 	} catch (error) {
 		next(error);

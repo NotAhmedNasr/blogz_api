@@ -40,6 +40,17 @@ router.get('/own', async (req, res, next) => {
 	}
 });
 
+router.get('/following', async (req, res, next) => {
+	const { query, userId } = req;
+
+	try {
+		const blogs = await blogActions.getFollowing(userId, query.page, query.count);
+		res.status(200).json(blogs);
+	} catch (error) {
+		next(error);
+	}
+});
+
 router.get('/:id', async (req, res, next) => {
 	const { params } = req;
 
