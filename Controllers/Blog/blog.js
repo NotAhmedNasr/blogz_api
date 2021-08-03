@@ -2,8 +2,9 @@ const Blog = require('../../Models/Blog/Blog');
 const User = require('../../Models/User/User');
 
 
-const add = (blogData) => {
-	const blog = Blog.create(blogData);
+const add = async (blogData) => {
+	const blog = await Blog.create(blogData);
+	await User.findByIdAndUpdate(blog.author, { $addToSet: { blogs: blog._id } }).exec();
 	return blog;
 };
 
@@ -12,6 +13,7 @@ const getAll = (page, count) => {
 		skip: (+page * +count),
 		limit: +count,
 	}).populate('author', '_id firstname lastname profilePic username')
+		.sort({ 'createdAt': -1 })
 		.exec();
 
 	return blogs;
@@ -24,6 +26,7 @@ const getFollowing = async (userId, page, count) => {
 		skip: (+page * +count),
 		limit: +count,
 	}).populate('author', '_id firstname lastname profilePic username')
+		.sort({ 'createdAt': -1 })
 		.exec();
 
 	return blogs;
@@ -41,18 +44,21 @@ const getOwn = (id, page, count) => {
 		skip: (+page * +count),
 		limit: +count,
 	}).populate('author', '_id firstname lastname profilePic username')
+		.sort({ 'createdAt': -1 })
 		.exec();
 
 	return blogs;
 };
 
 const deleteOne = async (id, userId) => {
-	const blogAuthor = await Blog.findById(id, { author: 1 }).exec();
+	const blog = await Blog.findById(id, { author: 1 }).exec();
 
-	if (blogAuthor && blogAuthor.author != userId)
+	if (blog && blog.author != userId)
 		throw new Error('UnAuthorized');
 
-	const result = Blog.findByIdAndDelete(id).exec();
+	await User.findByIdAndUpdate(blog.author, { $pull: { blogs: blog._id } }).exec();
+	const result = await Blog.findByIdAndDelete(id).exec();
+
 	return result;
 };
 

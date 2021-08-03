@@ -46,6 +46,10 @@ const userSchema = new Schema({
 		match: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
 		maxLength: 50,
 	},
+	blogs: [{
+		type: String,
+		ref: 'Blog'
+	}],
 	birthDate: Date,
 	profilePic: String,
 	followers: [{
